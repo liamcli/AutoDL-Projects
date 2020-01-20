@@ -21,12 +21,19 @@ OPS = {
 }
 
 CONNECT_NAS_BENCHMARK = ['none', 'skip_connect', 'nor_conv_3x3']
+CONNECT_NAS_BENCHMARK_NOZERO = ['skip_connect', 'nor_conv_3x3']
 NAS_BENCH_201         = ['none', 'skip_connect', 'nor_conv_1x1', 'nor_conv_3x3', 'avg_pool_3x3']
+NAS_BENCH_201_NOZERO  = ['skip_connect', 'nor_conv_1x1', 'nor_conv_3x3', 'avg_pool_3x3']
 DARTS_SPACE           = ['none', 'skip_connect', 'dua_sepc_3x3', 'dua_sepc_5x5', 'dil_sepc_3x3', 'dil_sepc_5x5', 'avg_pool_3x3', 'max_pool_3x3']
+DARTS_SPACE_NOZERO    = ['skip_connect', 'dua_sepc_3x3', 'dua_sepc_5x5', 'dil_sepc_3x3', 'dil_sepc_5x5', 'avg_pool_3x3', 'max_pool_3x3']
 
 SearchSpaceNames = {'connect-nas'  : CONNECT_NAS_BENCHMARK,
+                    'connect-nas-nozero' : CONNECT_NAS_BENCHMARK_NOZERO,
                     'nas-bench-201': NAS_BENCH_201,
-                    'darts'        : DARTS_SPACE}
+                    'nas-bench-201-nozero': NAS_BENCH_201_NOZERO,
+                    'darts'        : DARTS_SPACE,
+                    'darts-nozero': DARTS_SPACE_NOZERO
+                   }
 
 
 class ReLUConvBN(nn.Module):
