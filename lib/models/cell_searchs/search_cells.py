@@ -47,6 +47,20 @@ class NAS201SearchCell(nn.Module):
       nodes.append( sum(inter_nodes) )
     return nodes[-1]
 
+  # Forward with edge weights
+  def forward_edge_weights(self, inputs, weightss, edge_weights):
+    nodes = [inputs]
+    for i in range(1, self.max_nodes):
+      inter_nodes = []
+      for j in range(i):
+        node_str = '{:}<-{:}'.format(i, j)
+        edge_index = self.edge2index[node_str]
+
+        weights  = weightss[ edge_index ]
+        inter_nodes.append( edge_weights[edge_index] * sum( layer(nodes[j]) * w for layer, w in zip(self.edges[node_str], weights) ) )
+      nodes.append( sum(inter_nodes) )
+    return nodes[-1]
+
   # GDAS
   def forward_gdas(self, inputs, hardwts, index):
     nodes   = [inputs]
