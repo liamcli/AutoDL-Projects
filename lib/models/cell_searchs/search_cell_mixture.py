@@ -11,11 +11,12 @@ from ..cell_operations import OPS
 
 class MixedOp(nn.Module):
     def __init__(self, xlists):
+        super(MixedOp, self).__init__()
         self._ops = nn.ModuleList(xlists)
 
     def forward(self, x, weights):
-        self_fs = [op(x) for op in self._ops]
-        return sum( op * w for op, w in zip(self._fs, weights) ) )
+        self._fs = [op(x) for op in self._ops]
+        return sum( op * w for op, w in zip(self._fs, weights) )
 
 def set_grad(module, input_grad, output_grad):
     module.output_grad_value = output_grad
