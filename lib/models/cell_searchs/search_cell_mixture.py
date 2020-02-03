@@ -73,6 +73,6 @@ class NAS201SearchCell(nn.Module):
         edge_index = self.edge2index[node_str]
 
         weights  = weightss[ edge_index ]
-        inter_nodes.append( self.edges[node_str](nodes[j], weights) )
+        inter_nodes.append( edge_weights[edge_index] * self.edges[node_str](nodes[j], weights) )
       nodes.append( sum(inter_nodes) )
     return nodes[-1]
