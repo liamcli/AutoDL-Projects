@@ -30,7 +30,7 @@ class MixedOp(nn.Module):
         self._ops = nn.ModuleList()
 
         for primitive in op_names:
-          op = OPS[primitive](C_in, C_out //4, stride, affine, True)
+          op = OPS[primitive](C_in//4, C_out //4, stride, affine, True)
           if 'pool' in primitive:
             op = nn.Sequential(op, nn.BatchNorm2d(C_out//4, affine=False))
           self._ops.append(op)
