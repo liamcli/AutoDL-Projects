@@ -8,6 +8,8 @@ import torch.nn.functional as F
 from copy import deepcopy
 from ..cell_operations import OPS
 
+
+CHANNEL_REDUCTION = 8
 def channel_shuffle(x, groups):
     batchsize, num_channels, height, width = x.data.size()
 
@@ -30,17 +32,17 @@ class MixedOp(nn.Module):
         self._ops = nn.ModuleList()
 
         for primitive in op_names:
-          op = OPS[primitive](C_in//4, C_out //4, stride, affine, True)
+          op = OPS[primitive](C_in//CHANNEL_REDUCTION, C_out //CHANNEL_REDUCTION, stride, affine, True)
           if 'pool' in primitive:
-            op = nn.Sequential(op, nn.BatchNorm2d(C_out//4, affine=False))
+            op = nn.Sequential(op, nn.BatchNorm2d(C_out//CHANNEL_REDUCTION, affine=False))
           self._ops.append(op)
 
 
     def forward(self, x, weights):
         #channel proportion k=4  
         dim_2 = x.shape[1]
-        xtemp = x[ : , :  dim_2//4, :, :]
-        xtemp2 = x[ : ,  dim_2//4:, :, :]
+        xtemp = x[ : , :  dim_2//CHANNEL_REDUCTION, :, :]
+        xtemp2 = x[ : ,  dim_2//CHANNEL_REDUCTION:, :, :]
         self._fs = [op(xtemp) for op in self._ops]
         temp1 = sum(w * op for w, op in zip(weights, self._fs))
         #reduction cell needs pooling before concat
@@ -48,7 +50,7 @@ class MixedOp(nn.Module):
           ans = torch.cat([temp1,xtemp2],dim=1)
         else:
           ans = torch.cat([temp1,self.mp(xtemp2)], dim=1)
-        ans = channel_shuffle(ans,4)
+        ans = channel_shuffle(ans, CHANNEL_REDUCTION)
         #ans = torch.cat([ans[ : ,  dim_2//4:, :, :],ans[ : , :  dim_2//4, :, :]],dim=1)
         #except channe shuffle, channel shift also works
         return ans
