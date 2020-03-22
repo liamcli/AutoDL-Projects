@@ -9,7 +9,7 @@ from copy import deepcopy
 from ..cell_operations import OPS
 
 
-CHANNEL_REDUCTION = 8
+CHANNEL_REDUCTION = 4
 def channel_shuffle(x, groups):
     batchsize, num_channels, height, width = x.data.size()
 
